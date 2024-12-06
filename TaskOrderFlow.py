@@ -1,33 +1,24 @@
-from datetime import datetime
+import time
+
 class Task:
-    today = datetime.today()
-
-    def __init__(self, name: str, deadline: str, priority: int):
+    def __init__(self, name: str, priority: int, deadline: int) -> None:
         self.name = name
-        self.deadline = datetime.strptime(deadline, "%Y-%m-%d")
         self.priority = priority
+        self.deadline = deadline
+        self.updateTime()
 
-    def calculateScore(self):
+    def updateTime(self) -> None:
+        self.now = int(time.time())
+        self.score = self.calcScore()
+        print(self.score)
 
-        # TODO: Find a better scoring system
-        daysLeft = (self.deadline - self.today).days
-
-        dscore = 100 - daysLeft
-        pscore = 100 - 33.3333333 * self.priority
-        difficulty = None
-
+    def calcScore(self) -> float:
+        trem = (self.deadline - self.now) / 86400
+        dscore = max(0, 100 - trem)
+        pscore = 100 - (max(0, min(100, 25 * self.priority)))
 
         score = dscore * 0.7 + pscore * 0.3
-        score += 30 if daysLeft <= 0 else 0
-
         return score
 
-    def test(self):
-        print("Name: ", self.name,
-              "\nDeadline: ", self.deadline,
-              "\nPriority: ", self.priority,
-              "\nscore: ", self.calculateScore())
-
 if __name__ == '__main__':
-    t = Task('amogus', "2024-12-31", 0)
-    t.test()
+    a = Task("amogus", 0, int(time.time()) + 8640000)
